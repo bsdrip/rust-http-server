@@ -22,8 +22,15 @@ impl Server {
             match listener.accept() { // hangs until new connection arrives, returns a Result<(TcpStream, SocketAddr)> because might fail
                 Ok((mut stream, _)) => {
                     let mut buffer = [0; 1024];
-                    stream.read(&mut buffer); // reads bytes from socket
+
+                    match stream.read(&mut buffer) { // reads bytes from socket
+                        Ok(_) => {
+                            println!("Received a request: {}", String::from_utf8_lossy(&buffer));
+                        },
+                        Err(e) => println!("Failed to read from connection: {}", e)
+                    }
                 },
+
                 Err(e) => println!("Failed to establish a connection: {}", e),
             }
         }
